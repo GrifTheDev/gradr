@@ -1,37 +1,30 @@
 import type { Actions } from './$types'
 import { getDB } from '../../firebase'
 import { doc, getDoc } from 'firebase/firestore'
-import { createCipheriv, createDecipheriv, randomBytes } from "crypto"
+import {sha256} from "js-sha256"
 
 
 export const actions = {
     login: async ({cookies, request}) => {
         const formData = await request.formData()
-        const email = formData.get('email') || "a"
-        const password = formData.get('password') || ""
-        // get secret to be able to sha256 the pswd from firebase
+        const email: string = formData.get('email')?.toString() || "empty"
+        const password: string = formData.get('password')?.toString() || "empty"
 
+        // Data not submitted into one or more fields
+        if (email == "empty" || password == "empty") return { code: 500, message: "Please input data into both fields before clicking submit." }
+        // E-mail does not contain @something.com
+        if (email.split("@").length < 2) return { code: 500, message: "Invalid e-mail." }
+        // The part after @ in the email does not contain a .
+        if (email.split("@")[1].split(".").length < 2) return { code: 500, message: "Invalid e-mail." }
+
+        const sha256Email = sha256(email)
         const { db } = getDB()
-        const docRef = doc(db, 'users', email.toString())
-        const dbData = await getDoc(docRef)
-        let key: string = ""
+        const docRef = doc(db, 'users', sha256Email)
+        const dbData = (await getDoc(docRef)).data()
 
-        if (dbData.data()?.key != null || dbData.data()?.key != undefined) {
-            key = dbData.data()?.key
-        } else {
-            // email doesnt exist in db
-        }
-        console.log(key)
-        const initVector: any = randomBytes(16)
-        const cipher = createCipheriv("aes-256-ctr", key, initVector)
-        const encryptedPwsd: any = Buffer.concat([cipher.update(password.toString()), cipher.final()])
+        if (dbData == undefined) return {code: 500, message: `Could not find an account registered with the email: ${email}`}
 
-        console.log(encryptedPwsd.toString('hex')) // iamapass
-
-        const decipher = createDecipheriv("aes-256-ctr", key, Buffer.from(initVector, 'hex'))
-
-        const decry = Buffer.concat([decipher.update(Buffer.from(encryptedPwsd, 'hex')), decipher.final()])
-
-        console.log(decry.toString())
+        console.log(dbData)
+        // now...
     }
 } satisfies Actions

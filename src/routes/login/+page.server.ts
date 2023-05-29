@@ -2,6 +2,8 @@ import type { Actions } from "./$types";
 import { getDB } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { sha256 } from "js-sha256";
+import jwt from "jsonwebtoken";
+import { config } from "../../../config";
 
 export const actions = {
   login: async ({ cookies, request }) => {
@@ -12,7 +14,7 @@ export const actions = {
     // Data not submitted into one or more fields
     if (email == "empty" || password == "empty")
       return {
-        code: 500,
+        code: 400,
         message: "Please input data into both fields before clicking submit.",
       };
     // E-mail does not contain @something.com
@@ -35,13 +37,33 @@ export const actions = {
         message: `Invalid username/password.`,
       };
 
-    const dbPswd = dbData.password;
+    const dbPswd: string = dbData.password;
+    const userId: string = dbData.id;
 
     if (dbPswd == sha256Pswd) {
       console.log("Logged in!");
-      
-    } else{
-        return { code: 500, message: "Invalid username/password." }
+
+      const token = jwt.sign(
+        {
+          email: sha256Email,
+          id: userId,
+        },
+        config.jwt_secret,
+        {
+          expiresIn: "7d",
+        }
+      );
+
+      cookies.set("AuthorizationToken", `Bearer ${token}`, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 7,
+      });
+      console.log(token)
+      return { code: 200 };
+    } else {
+      return { code: 500, message: "Invalid username/password." };
     }
     // now...
   },

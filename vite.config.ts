@@ -5,7 +5,7 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
 		fs: {
-			allow: ['..'] // importing config.ts here errors out for some weird reasons, so just allowing the whole dir above src fixes the issue
+			allow: ['..'] // importing config.ts in src errors out for some weird reasons, so just allowing the whole dir above src fixes the issue
 		}
 	}
 });

@@ -8,7 +8,7 @@
 
 <h1>Login</h1>
 
-{#if form?.code == 500}
+{#if form?.code == 500 || form?.code == 400}
   <div class="container">
     <p>
       ERROR: {form.message}

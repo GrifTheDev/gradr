@@ -5,9 +5,6 @@
   let showPswd = false
 
   $: type = showPswd ? 'text' : 'password'
-
-  export function showPass() {
-  }
 </script>
 
 <h1>Login</h1>

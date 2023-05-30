@@ -1,17 +1,15 @@
 <script lang="ts">
-  import type { PageData, ActionData } from "./$types";
-
-  //export let data: PageData;
+  import type { ActionData } from "./$types";
 
   export let form: ActionData;
 </script>
 
 <h1>Login</h1>
 
-{#if form?.code == 500 || form?.code == 400}
+{#if form?.message}
   <div class="container">
     <p>
-      ERROR: {form.message}
+      ({form.code}) The server responded with an error: {form.message} 
     </p>
     <form method="post" action="?/login">
       E-mail: <input name="email" class="email-input" /> <br />

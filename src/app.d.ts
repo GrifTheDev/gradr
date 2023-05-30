@@ -3,6 +3,7 @@
 
 interface userSession {
     email: string,
+	username: string,
     id: string
 }
 declare global {

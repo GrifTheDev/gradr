@@ -4,4 +4,9 @@
     export let data: PageData;
 </script>
 
-<h1>{data.user.email}</h1>
+<h1>Hello {data.user.username}!</h1>
+
+<form method="post" action="?/logout">
+    <button type="submit">Log Out</button>
+</form>
+

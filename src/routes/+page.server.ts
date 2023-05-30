@@ -1,15 +1,21 @@
-import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import { redirect } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ locals }) => {
-
-    console.log(locals.user)
-
-    if (locals.user == undefined) {
-        console.log("as")
-
-        throw redirect(302, "/login")
-    }
-    return locals
-
+  if (locals.user == undefined) {
+    throw redirect(303, "/login");
+  }
+  return locals;
 }) satisfies PageServerLoad;
+
+export const actions = {
+    logout: async({cookies, request}) => {
+        const cookie = cookies.get("AuthorizationToken")
+
+        if (cookie) {
+            cookies.delete("AuthorizationToken")
+
+            throw redirect(303, "/about")
+        }
+    }
+}

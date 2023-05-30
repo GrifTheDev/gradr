@@ -4,6 +4,14 @@ import { doc, getDoc } from "firebase/firestore";
 import { sha256 } from "js-sha256";
 import jwt from "jsonwebtoken";
 import { config } from "../../../config";
+import { redirect } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
+
+export const load = (async ({ locals }) => {
+  if (locals.user != undefined) {
+    throw redirect(303, "/");
+  }
+}) satisfies PageServerLoad;
 
 export const actions = {
   login: async ({ cookies, request }) => {
@@ -19,10 +27,10 @@ export const actions = {
       };
     // E-mail does not contain @something.com
     if (email.split("@").length < 2)
-      return { code: 500, message: "Invalid e-mail." };
+      return { code: 422, message: "Invalid e-mail." };
     // The part after @ in the email does not contain a .
     if (email.split("@")[1].split(".").length < 2)
-      return { code: 500, message: "Invalid e-mail." };
+      return { code: 422, message: "Invalid e-mail." };
 
     const sha256Email = sha256(email);
     const sha256Pswd = sha256(password);
@@ -31,21 +39,21 @@ export const actions = {
     const dbData = (await getDoc(docRef)).data();
 
     // For security reasons, it's better to say invalid username/password, than to mention what is wrong
-    if (dbData == undefined)
+    if (dbData == undefined) // email hash not found in db, does this account exist?
       return {
-        code: 500,
+        code: 401,
         message: `Invalid username/password.`,
       };
 
     const dbPswd: string = dbData.password;
     const userId: string = dbData.id;
+    const username: string = dbData.username
 
     if (dbPswd == sha256Pswd) {
-      console.log("Logged in!");
-
       const token = jwt.sign(
         {
           email: sha256Email,
+          username: username,
           id: userId,
         },
         config.jwt_secret,
@@ -57,14 +65,13 @@ export const actions = {
       cookies.set("AuthorizationToken", `Bearer ${token}`, {
         httpOnly: true,
         secure: true,
+        path: "/",
         sameSite: "strict",
         maxAge: 60 * 60 * 24 * 7,
       });
-      console.log(token)
-      return { code: 200 };
+      throw redirect(303, "/")
     } else {
-      return { code: 500, message: "Invalid username/password." };
+      return { code: 401, message: "Invalid username/password." };      
     }
-    // now...
   },
 } satisfies Actions;

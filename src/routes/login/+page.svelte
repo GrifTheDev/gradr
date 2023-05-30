@@ -7,23 +7,45 @@
   $: type = showPswd ? "text" : "password";
 </script>
 
-<h1>Login</h1>
+<div class="login-form">
+  <h1>Welcome back!</h1>
 
-{#if form?.message}
-  <p>
-    ({form.code}) The server responded with an error: {form.message}
-  </p>
-{/if}
+  {#if form?.message}
+    <p>
+      ({form.code}) The server responded with an error: {form.message}
+    </p>
+  {:else}
+    <p>Let's get you logged in.</p>
+  {/if}
 
-<div class="container">
   <form method="post" action="?/login">
-    E-mail: <input name="email" class="email-input" /> <br />
-    Password:
+    E-mail: <br />
+    <input name="email" class="email-input" /> <br />
+    Password: <br />
     <input {type} autocomplete="off" name="password" class="pswd-input" />
     <br />
     <input type="checkbox" on:click={() => (showPswd = !showPswd)} />Show
     Password <br />
-    <button type="submit">Submit</button>
+    <button type="submit">Login</button>
   </form>
+  <p class="reg">Don't have an account yet? <a href="/register">Register here.</a></p>
 </div>
-<p>Don't have an account yet? <a href="/register">Register here.</a></p>
+
+<style>
+  h1 {
+    margin: 0;
+  }
+
+  .reg {
+    font-size: small;
+  }
+
+  .login-form {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+  }
+</style>

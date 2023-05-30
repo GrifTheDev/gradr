@@ -7,22 +7,26 @@
   $: type = showPswd ? "text" : "password";
 </script>
 
-<h1>Register</h1>
+<div class="register-form">
+  <h1>Register</h1>
 
-{#if form?.message}
-  <p>
-    ({form.code}) The server responded with an error: {form.message}
-  </p>
-{/if}
+  {#if form?.message}
+    <p class="msg">
+      ({form.code}) The server responded with an error: {form.message}
+    </p>
+  {:else}
+    <p>Let's get you up and running!</p>
+  {/if}
 
-<div class="container">
   <form method="post" action="?/register">
-    Username: <input name="username" class="username-input" /> <br />
-    E-mail: <input name="email" class="email-input" /> <br />
-    Password:
+    Name: <br />
+    <input name="username" class="username-input" /> <br />
+    Email: <br />
+    <input name="email" class="email-input" /> <br />
+    Password: <br />
     <input {type} autocomplete="off" name="password" class="pswd-input" />
     <br />
-    Confirm Password:
+    Confirm Password: <br />
     <input
       {type}
       autocomplete="off"
@@ -31,6 +35,25 @@
     /> <br />
     <input type="checkbox" on:click={() => (showPswd = !showPswd)} />Show
     Password <br />
-    <button type="submit">Submit</button>
+    <button type="submit">Register</button>
   </form>
 </div>
+
+<style>
+  h1 {
+    margin: 0;
+  }
+
+  .msg {
+    width: 30vw
+  }
+
+  .register-form {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+  }
+</style>

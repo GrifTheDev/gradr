@@ -19,11 +19,11 @@ async function generateId(len: number): Promise<string> {
 }
 
 async function validatePswd(pswd: string) {
-    if (pswd.length < 8) 
-        return { code: 422, message: "The password you have provided is too short. Please create a password that is 8 or more characters long." }
-
-
-    return 0
+  var pattern =
+    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@#!$%^&+=])[A-Za-z\d@#!$%^&+=]{8,}$/;
+  
+  return pattern.test(pswd) ? 0 : {code: 422, message: "Your password must be at least 8 characters long, have a letter, number and special character."}
+  return 0;
 }
 
 export const load = (async ({ locals }) => {
@@ -62,10 +62,9 @@ export const actions = {
     if (password != confirmPassword)
       return { code: 400, message: "Passwords do not match." };
 
-    const validation = await validatePswd(password)
+    const validation = await validatePswd(password);
 
-    if (validation != 0) 
-        return validation
+    if (validation != 0) return validation;
 
     const { db } = getDB();
     const sha256Email = sha256(email);

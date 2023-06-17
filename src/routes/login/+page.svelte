@@ -12,7 +12,7 @@
 
   {#if form?.message}
     <p>
-      ({form.code}) The server responded with an error: {form.message}
+      ({form.code}) {form.message}
     </p>
   {:else}
     <p>Let's get you logged in.</p>
@@ -31,21 +31,3 @@
   <p class="reg">Don't have an account yet? <a href="/register">Register here.</a></p>
 </div>
 
-<style>
-  h1 {
-    margin: 0;
-  }
-
-  .reg {
-    font-size: small;
-  }
-
-  .login-form {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-  }
-</style>

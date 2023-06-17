@@ -39,21 +39,3 @@
   </form>
 </div>
 
-<style>
-  h1 {
-    margin: 0;
-  }
-
-  .msg {
-    width: 30vw
-  }
-
-  .register-form {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-  }
-</style>

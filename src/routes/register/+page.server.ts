@@ -23,7 +23,7 @@ async function validatePswd(pswd: string) {
     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@#!$%^&+=])[A-Za-z\d@#!$%^&+=]{8,}$/;
   
   return pattern.test(pswd) ? 0 : {code: 422, message: "Your password must be at least 8 characters long, have a letter, number and special character."}
-  return 0;
+
 }
 
 export const load = (async ({ locals }) => {
@@ -70,7 +70,7 @@ export const actions = {
     const sha256Email = sha256(email);
 
     const docRef = doc(db, "users", sha256Email);
-    const userData = await (await getDoc(docRef)).data();
+    const userData = (await getDoc(docRef)).data();
 
     if (userData != undefined)
       return {
